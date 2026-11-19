@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PaGamO 題組下載器</title>
+<meta name="description" content="把 Gemini 產生的題組資料貼上，一鍵下載可直接上傳 PaGamO 的題組 Excel。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📥%3C/text%3E%3C/svg%3E">
+<style>
+  :root{--bg:#f4f7fb;--card:#fff;--ink:#1f2937;--muted:#475569;--brand:#2563eb;--brand2:#7c3aed;--line:#e2e8f0;--ok:#15803d;--err:#b91c1c;
+    --fs-sm:15px;--fs-md:17px;--fs-lg:20px;--fs-xl:clamp(24px,3vw,34px)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--muted:#94a3b8;--line:#334155;--ok:#4ade80;--err:#f87171}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Microsoft JhengHei","PingFang TC",sans-serif;font-size:var(--fs-md);line-height:1.7}
+  main{max-width:1100px;margin:0 auto;padding:28px 16px 40px}
+  h1{font-size:var(--fs-xl);margin:0 0 6px}
+  .lead{color:var(--muted);margin:0 0 20px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,.05)}
+  .panel h2{font-size:var(--fs-lg);margin:0 0 10px}
+  textarea{width:100%;min-height:300px;font:14px/1.5 ui-monospace,Consolas,monospace;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);resize:vertical}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+  button{font-size:var(--fs-md);padding:12px 18px;border:0;border-radius:12px;cursor:pointer;font-weight:600}
+  .primary{background:var(--brand);color:#fff;flex:1}
+  .ghost{background:var(--line);color:var(--ink)}
+  button:disabled{opacity:.5;cursor:not-allowed}
+  #msg{font-weight:700;white-space:pre-line;margin:12px 0 0}
+  .ok{color:var(--ok)}.err{color:var(--err)}
+  #preview{font-size:var(--fs-sm)}
+  #preview .empty{color:var(--muted)}
+  #preview .set{border-top:1px dashed var(--line);padding-top:10px;margin-top:10px}
+  #preview .set:first-child{border-top:0;margin-top:0;padding-top:0}
+  #preview .meta{color:var(--muted)}
+  #preview ol{padding-left:20px;margin:6px 0}
+  #preview .ans{color:var(--ok);font-weight:700}
+  .steps{margin:0;padding-left:20px}
+  .site-footer{background:linear-gradient(#e9eef7,#e2e8f3);border-top:1px solid var(--line);position:relative}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .site-footer{background:linear-gradient(#111827,#0b1220)}}
+  .site-footer::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+  .footer-inner{max-width:1100px;margin:0 auto;padding:28px 16px 16px;display:grid;grid-template-columns:1.2fr 2fr;gap:24px}
+  @media (max-width:860px){.footer-inner{grid-template-columns:1fr}}
+  .footer-brand{display:flex;gap:12px;align-items:flex-start}
+  .footer-brand .logo{font-size:40px;line-height:1}
+  .footer-brand strong{display:block;font-size:var(--fs-lg)}
+  .footer-brand span{color:var(--muted);font-size:var(--fs-sm)}
+  .footer-points{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:600px){.footer-points{grid-template-columns:1fr}}
+  .footer-points li{display:flex;gap:10px}
+  .footer-points .i{font-size:24px}
+  .footer-points strong{display:block}
+  .footer-points small{color:var(--muted);font-size:var(--fs-sm)}
+  .footer-bottom{max-width:1100px;margin:0 auto;padding:12px 16px 24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:var(--fs-sm);color:var(--muted)}
+  @media (max-width:600px){.footer-bottom{flex-direction:column;align-items:center;text-align:center}}
+  .site-credit a{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor}
+  .site-credit a:hover{color:var(--brand)}
+  .version-tag{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--card)}
+</style>
+</head>
+<body>
+<main>
+  <h1>📥 PaGamO 題組下載器</h1>
+  <p class="lead">把 Gemini（pagamo-reading-set 技能）給你的「題組資料」貼進來，按一下就下載可以直接上傳 PaGamO 的題組 Excel。</p>
+  <div class="grid">
+    <section class="panel">
+      <h2>① 貼上題組資料</h2>
+      <textarea id="input" placeholder="在 Gemini 的「題組資料」程式碼區塊右上角按「複製」，再貼到這裡（Ctrl+V）"></textarea>
+      <div class="row">
+        <button class="ghost" id="paste" type="button">📋 從剪貼簿貼上</button>
+        <button class="ghost" id="clear" type="button">清除</button>
+      </div>
+      <p id="msg"></p>
+    </section>
+    <section class="panel">
+      <h2>② 確認題目，下載 Excel</h2>
+      <div id="preview"><p class="empty">貼上資料後，這裡會列出題目和正確答案。</p></div>
+      <div class="row"><button class="primary" id="dl" type="button" disabled>⬇ 下載 PaGamO 題組 Excel</button></div>
+      <h2 style="margin-top:18px">③ 上傳到 PaGamO</h2>
+      <ol class="steps">
+        <li>PaGamO 教師後台 →「新增題目」→「批量上傳」。</li>
+        <li>題型選「題組」，選剛下載的檔案，按「上傳」。</li>
+        <li>到「題目總覽」檢查題目。</li>
+      </ol>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><span class="logo" aria-hidden="true">📥</span>
+      <div><strong>PaGamO 題組下載器</strong><span>Gemini 出題、這裡轉檔，PaGamO 一次上傳</span></div></div>
+    <ul class="footer-points">
+      <li><span class="i">🔒</span><div><strong>資料不外傳</strong><small>題目只在你的瀏覽器裡轉成 Excel，不會送到任何伺服器</small></div></li>
+      <li><span class="i">📄</span><div><strong>官方範本</strong><small>每次都用 PaGamO 最新的官方題組範本填寫</small></div></li>
+      <li><span class="i">✅</span><div><strong>已實測</strong><small>產生的檔案已在 PaGamO 批量上傳驗證通過</small></div></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <p class="site-credit" style="margin:0">Made with <span aria-label="愛心">❤️</span> by
+      <a href="https://cagoooo.github.io/Akai/" target="_blank" rel="noopener noreferrer">阿凱老師</a>・桃園市龍潭區石門國民小學</p>
+    <span class="version-tag" id="ver">v1.1.0</span>
+  </div>
+</footer>
+
+<script src="pagamo.js"></script>
+<script>
+(function () {
+  var input = document.getElementById('input'), msg = document.getElementById('msg'),
+      preview = document.getElementById('preview'), dl = document.getElementById('dl');
+  var data = null;
+
+  function show(text, cls) { msg.textContent = text; msg.className = cls || ''; }
+
+  function extract(raw) {
+    var s = raw.trim().replace(/^```[a-zA-Z]*\s*/, '').replace(/```\s*$/, '');
+    var a = s.indexOf('{'), b = s.lastIndexOf('}');
+    if (a < 0 || b < a) throw new Error('找不到題組資料。請複製 Gemini「題組資料」那個程式碼區塊的全部內容。');
+    s = s.slice(a, b + 1).replace(/[“”]/g, '"');
+    try { return JSON.parse(s); }
+    catch (e) { throw new Error('題組資料格式有誤（' + e.message + '）。請在 Gemini 說「題組資料格式有錯，請重新輸出」。'); }
+  }
+
+  function render(d) {
+    preview.innerHTML = '';
+    d.sets.forEach(function (s, i) {
+      var box = document.createElement('div'); box.className = 'set';
+      var h = document.createElement('strong'); h.textContent = (i + 1) + '. ' + s.title; box.appendChild(h);
+      var meta = document.createElement('div'); meta.className = 'meta';
+      meta.textContent = s.subject + ' › ' + s.book + ' › ' + s.chapter + '｜文章 ' + String(s.content || '').length + ' 字｜' + s.questions.length + ' 題';
+      box.appendChild(meta);
+      var ol = document.createElement('ol');
+      s.questions.forEach(function (q) {
+        var li = document.createElement('li'); li.textContent = q.question + ' ';
+        var ans = document.createElement('span'); ans.className = 'ans';
+        var letter = String(q.answer).toUpperCase().trim();
+        var idx = 'ABCDE'.indexOf(letter.charAt(0));
+        ans.textContent = '→ ' + letter + (idx >= 0 && q.options[idx] ? '「' + q.options[idx] + '」' : '');
+        li.appendChild(ans); ol.appendChild(li);
+      });
+      box.appendChild(ol); preview.appendChild(box);
+    });
+  }
+
+  function update() {
+    data = null; dl.disabled = true;
+    if (!input.value.trim()) { show(''); preview.innerHTML = '<p class="empty">貼上資料後，這裡會列出題目和正確答案。</p>'; return; }
+    try {
+      var d = extract(input.value);
+      var errs = PagamoGemini.validate(d);
+      if (errs.length) { show('❌ 題組資料有問題，請 Gemini 修正後重新輸出：\n' + errs.join('\n'), 'err'); preview.innerHTML = ''; return; }
+      data = d; render(d); dl.disabled = false;
+      var total = d.sets.reduce(function (n, s) { return n + s.questions.length; }, 0);
+      show('✅ 讀到 ' + d.sets.length + ' 篇文章、' + total + ' 題，請確認右邊的題目後按下載。', 'ok');
+    } catch (e) { show('❌ ' + e.message, 'err'); preview.innerHTML = ''; }
+  }
+
+  input.addEventListener('input', update);
+  document.getElementById('clear').onclick = function () { input.value = ''; update(); input.focus(); };
+  document.getElementById('paste').onclick = function () {
+    if (!navigator.clipboard || !navigator.clipboard.readText) { show('這個瀏覽器不能直接讀剪貼簿，請點左邊的框框按 Ctrl+V 貼上。', 'err'); return; }
+    navigator.clipboard.readText().then(function (t) { input.value = t; update(); },
+      function () { show('沒有讀到剪貼簿，請點左邊的框框按 Ctrl+V 貼上。', 'err'); });
+  };
+  dl.onclick = function () {
+    if (!data) return;
+    dl.disabled = true; show('產生中…');
+    PagamoGemini.download(data).then(function (name) { show('✅ 已下載「' + name + '」，請到 PaGamO 批量上傳。', 'ok'); })
+      .catch(function (e) { show('❌ ' + e.message, 'err'); })
+      .then(function () { dl.disabled = false; });
+  };
+})();
+</script>
+</body>
+</html>

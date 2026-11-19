@@ -1,4 +1,12 @@
-# PaGamO 題組一鍵下載（給 Gemini Canvas 使用）
+# PaGamO 題組下載器
+
+👉 網頁：https://cagoooo.github.io/pagamo-gemini/
+
+把 Gemini（pagamo-reading-set 技能）給的「題組資料」貼進網頁，按一下就下載可以直接上傳 PaGamO 的題組 Excel。
+
+> 2026-11-19 實測：Gemini 打開 Canvas 時不能同時使用技能，所以改成「複製題組資料 → 貼到這個網頁 → 下載」。
+
+## 程式庫（也可以在其他網頁使用）
 
 讓 Gemini 的 Skill「pagamo-reading-set」產生題組後，用 Canvas 做一個小網頁，老師按一下就能下載**可以直接上傳 PaGamO 的題組 Excel 檔**。
 
