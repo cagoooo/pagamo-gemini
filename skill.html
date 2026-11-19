@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gemini 技能安裝教學｜PaGamO 閱讀題組</title>
+<meta name="description" content="下載 pagamo-reading-set 技能檔，照著 5 個步驟裝進 Gemini，貼上文章就能產生 PaGamO 閱讀題組，再用題組下載器轉成可直接上傳的 Excel。">
+<meta name="build-version" content="1.5.0">
+<meta name="theme-color" content="#1e1b4b">
+<link rel="icon" href="favicon.ico?v=1.5.0" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="favicon.svg?v=1.5.0">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=1.5.0">
+<link rel="manifest" href="manifest.webmanifest?v=1.5.0">
+<link rel="canonical" href="https://cagoooo.github.io/pagamo-gemini/skill.html">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="PaGamO 題組下載器">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:url" content="https://cagoooo.github.io/pagamo-gemini/skill.html">
+<meta property="og:title" content="Gemini 技能安裝教學｜PaGamO 閱讀題組">
+<meta property="og:description" content="下載技能檔、照 5 個步驟裝進 Gemini，貼上文章就能產生 PaGamO 閱讀題組。">
+<meta property="og:image" content="https://cagoooo.github.io/pagamo-gemini/og-image.jpg?v=1.5.0">
+<meta property="og:image:secure_url" content="https://cagoooo.github.io/pagamo-gemini/og-image.jpg?v=1.5.0">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="PaGamO 題組下載器：Gemini 出題、貼上資料、下載 Excel、上傳 PaGamO">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Gemini 技能安裝教學｜PaGamO 閱讀題組">
+<meta name="twitter:description" content="下載技能檔、照 5 個步驟裝進 Gemini，貼上文章就能產生 PaGamO 閱讀題組。">
+<meta name="twitter:image" content="https://cagoooo.github.io/pagamo-gemini/og-image.jpg?v=1.5.0">
+<style>
+  :root{--bg:#f4f7fb;--card:#fff;--ink:#1f2937;--muted:#475569;--brand:#2563eb;--brand2:#7c3aed;--accent:#f59e0b;--line:#e2e8f0;--ok:#15803d;--warn:#b45309;--soft:#eef2ff;
+    --fs-xs:.9rem;--fs-sm:.95rem;--fs-md:1.05rem;--fs-lg:1.3rem;--fs-xl:clamp(1.6rem,2.6vw,2.3rem);
+    --maxw:min(1480px,94vw);--pad:clamp(16px,2.5vw,32px)}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--muted:#94a3b8;--line:#334155;--ok:#4ade80;--warn:#fbbf24;--soft:#1e1b4b}}
+  html{font-size:16px}
+  @media (min-width:768px){html{font-size:17px}}
+  @media (min-width:1200px){html{font-size:18px}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Microsoft JhengHei","PingFang TC",sans-serif;font-size:var(--fs-md);line-height:1.75}
+  main{max-width:var(--maxw);margin:0 auto;padding:clamp(20px,3vw,40px) var(--pad) 48px}
+  a{color:var(--brand)}
+  .back{display:inline-block;margin-bottom:10px;font-size:var(--fs-sm);font-weight:700;text-decoration:none}
+  h1{font-size:var(--fs-xl);margin:0 0 6px;display:flex;align-items:center;gap:.4em;line-height:1.3}
+  .h1-icon{width:1.25em;height:1.25em;border-radius:22%;flex:none}
+  .lead{color:var(--muted);margin:0 0 22px;max-width:60em}
+  h2{font-size:var(--fs-lg);margin:36px 0 14px;display:flex;align-items:center;gap:.45em}
+  h2 .tag{font-size:var(--fs-xs);font-weight:700;color:#fff;background:var(--brand);border-radius:999px;padding:2px 12px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,2vw,28px);box-shadow:0 4px 16px rgba(0,0,0,.05)}
+  .hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:clamp(16px,2.5vw,32px);align-items:center;
+    background:linear-gradient(135deg,var(--soft),var(--card));position:relative;overflow:hidden}
+  .hero::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,var(--brand),var(--brand2),var(--accent))}
+  @media (max-width:860px){.hero{grid-template-columns:1fr}}
+  .hero h3{margin:0 0 6px;font-size:var(--fs-lg)}
+  .hero p{margin:0 0 10px;color:var(--muted)}
+  .btns{display:flex;flex-direction:column;gap:10px}
+  .btn{display:flex;align-items:center;justify-content:center;gap:8px;font-size:var(--fs-md);font-weight:800;text-decoration:none;border-radius:14px;padding:14px 18px;min-height:52px;border:0;cursor:pointer;font-family:inherit}
+  .btn.primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 8px 20px -8px rgba(37,99,235,.7)}
+  .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line);font-weight:700}
+  .btn small{font-weight:500;color:inherit;opacity:.85}
+  .note{font-size:var(--fs-sm);color:var(--muted);margin:4px 0 0}
+  .steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,440px),1fr));gap:clamp(14px,1.8vw,22px)}
+  .step{display:flex;flex-direction:column;gap:10px}
+  .step .num{display:inline-flex;align-items:center;justify-content:center;width:2.1em;height:2.1em;border-radius:50%;flex:none;
+    background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:900}
+  .step h3{margin:0;font-size:var(--fs-md);display:flex;align-items:center;gap:.6em;line-height:1.4}
+  .step p{margin:0}
+  .step img{display:block;max-width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#111;margin-top:auto}
+  .step .btn{align-self:flex-start;min-height:44px;padding:10px 16px;font-size:var(--fs-sm)}
+  .warn{background:rgba(245,158,11,.12);border-left:4px solid var(--accent);border-radius:10px;padding:10px 14px;font-size:var(--fs-sm)}
+  .warn b{color:var(--warn)}
+  kbd,code{font-family:ui-monospace,Consolas,monospace;font-size:.92em;background:var(--soft);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+  .faq details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+  .faq summary{cursor:pointer;font-weight:800}
+  .faq details p,.faq details ul{margin:8px 0 0}
+  .copyrow{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:10px;margin-top:12px}
+  #copyMsg{font-weight:700;color:var(--ok);min-height:1.5em;margin:10px 0 0}
+  .site-footer{background:linear-gradient(#e9eef7,#e2e8f3);border-top:1px solid var(--line);position:relative;margin-top:20px}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .site-footer{background:linear-gradient(#111827,#0b1220)}}
+  .site-footer::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+  .footer-inner{max-width:var(--maxw);margin:0 auto;padding:28px var(--pad) 16px;display:grid;grid-template-columns:1.2fr 2fr;gap:24px}
+  @media (max-width:860px){.footer-inner{grid-template-columns:1fr}}
+  .footer-brand{display:flex;gap:12px;align-items:flex-start}
+  .footer-brand .logo{width:3rem;height:3rem;flex:none;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,.18)}
+  .footer-brand strong{display:block;font-size:var(--fs-lg)}
+  .footer-brand span{color:var(--muted);font-size:var(--fs-sm)}
+  .footer-points{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media (max-width:600px){.footer-points{grid-template-columns:1fr}}
+  .footer-points li{display:flex;gap:10px}
+  .footer-points .i{font-size:1.5rem}
+  .footer-points strong{display:block}
+  .footer-points small{color:var(--muted);font-size:var(--fs-sm)}
+  .footer-bottom{max-width:var(--maxw);margin:0 auto;padding:12px var(--pad) 24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:var(--fs-sm);color:var(--muted)}
+  @media (max-width:600px){.footer-bottom{flex-direction:column;align-items:center;text-align:center}}
+  .site-credit{margin:0}
+  .site-credit a{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor}
+  .site-credit a:hover{color:var(--brand)}
+  .version-tag{border:1px solid var(--line);border-radius:999px;padding:2px 10px;background:var(--card)}
+</style>
+</head>
+<body>
+<main>
+  <a class="back" href="./">← 回到 PaGamO 題組下載器</a>
+  <h1><img class="h1-icon" src="favicon.svg?v=1.5.0" alt="" width="44" height="44">Gemini 技能安裝教學</h1>
+  <p class="lead">把「PaGamO 閱讀題組」技能裝進你的 Gemini 之後，貼上一篇文章，Gemini 就會照 PIRLS 四層次出好題組，並給你一段「題組資料」。把它貼到題組下載器，就能下載可以直接上傳 PaGamO 的 Excel。安裝只要做一次，大約 2 分鐘。</p>
+
+  <section class="panel hero" aria-labelledby="dl-title">
+    <div>
+      <h3 id="dl-title">① 先下載技能檔</h3>
+      <p>只要下載一個檔案 <code>SKILL.md</code>，<b>不用解壓縮</b>，下載完放在「下載」資料夾就好。</p>
+      <p class="note">技能名稱：<code>pagamo-reading-set</code>｜適用：學校 Google 帳號（教育版 Gemini）</p>
+    </div>
+    <div class="btns">
+      <a class="btn primary" href="skill/pagamo-reading-set/SKILL.md?v=1.5.0" download="SKILL.md">⬇ 下載技能檔 SKILL.md</a>
+      <a class="btn ghost" href="skill/pagamo-reading-set.zip?v=1.5.0" download="pagamo-reading-set.zip">📦 下載資料夾版（.zip）<small>要先解壓縮</small></a>
+      <a class="btn ghost" href="https://github.com/cagoooo/pagamo-gemini/tree/main/skill/pagamo-reading-set" target="_blank" rel="noopener noreferrer">🔍 在 GitHub 看技能內容</a>
+    </div>
+  </section>
+
+  <h2><span class="tag">安裝</span>把技能裝進 Gemini（5 個步驟）</h2>
+  <ol class="steps">
+    <li class="panel step">
+      <h3><span class="num">1</span>用學校帳號打開 Gemini 的「技能」頁面</h3>
+      <p>按下面的按鈕直接開啟。右上角的頭像要是<b>學校帳號</b>；不是的話先切換帳號。</p>
+      <a class="btn ghost" href="https://gemini.google.com/customize/skills" target="_blank" rel="noopener noreferrer">↗ 開啟 Gemini 技能頁</a>
+    </li>
+    <li class="panel step">
+      <h3><span class="num">2</span>按右上角「建立 ▾」，選「上傳」</h3>
+      <p>選單裡有三個選項，選最下面的「上傳」。</p>
+      <img src="guide/1-create-menu.png?v=1.5.0" alt="技能頁右上角的「建立」選單，有運用 Gemini 建立、手動建立、上傳三個選項" width="734" height="208" loading="lazy">
+    </li>
+    <li class="panel step">
+      <h3><span class="num">3</span>按「檔案」，選剛下載的 SKILL.md</h3>
+      <p>在「下載」資料夾找到 <code>SKILL.md</code> 選它就好。</p>
+      <div class="warn"><b>不要選「資料夾」上傳整個資料夾</b>：資料夾裡如果還有別的檔案，會一起被塞進技能，Gemini 反而容易卡住。</div>
+      <img src="guide/2-upload-file.png?v=1.5.0" alt="上傳技能對話框：拖曳或選取檔案或資料夾，接受 PDF、CSV、PY、TXT 和 MD 檔案" width="512" height="443" loading="lazy">
+    </li>
+    <li class="panel step">
+      <h3><span class="num">4</span>出現「上傳其他檔案（選用）」，直接按「上傳」</h3>
+      <p>下方「附件」只看到 <code>SKILL.md</code> 一個就對了。這一頁<b>什麼都不要再加</b>，按右下角藍色的「上傳」。</p>
+      <img src="guide/3-upload-confirm.png?v=1.5.0" alt="上傳其他檔案（選用）頁面，附件只有 SKILL.md，右下角有上傳按鈕" width="512" height="563" loading="lazy">
+    </li>
+    <li class="panel step">
+      <h3><span class="num">5</span>「已安裝」出現 pagamo-reading-set，就完成了</h3>
+      <p>如果看到「已有名為 pagamo-reading-set 的技能」，代表你之前裝過，請看下面「怎麼更新成新版」。</p>
+      <img src="guide/4-installed.png?v=1.5.0" alt="技能頁的已安裝區出現 pagamo-reading-set" width="734" height="147" loading="lazy">
+    </li>
+  </ol>
+
+  <h2><span class="tag">使用</span>出題 → 下載 → 上傳</h2>
+  <ol class="steps">
+    <li class="panel step">
+      <h3><span class="num">1</span>開新對話，輸入框打 <kbd>@</kbd> 選技能</h3>
+      <p>打 <kbd>@pag</kbd> 就會出現 <code>pagamo-reading-set</code>，點它。</p>
+      <div class="warn"><b>先不要打開 Canvas</b>：Canvas 開著時，Gemini 不能使用技能。</div>
+      <img src="guide/5-use-at.png?v=1.5.0" alt="Gemini 輸入框打 @pag，下方技能清單出現 pagamo-reading-set" width="668" height="153" loading="lazy">
+    </li>
+    <li class="panel step">
+      <h3><span class="num">2</span>貼上文章（或上傳課文照片、PDF），送出</h3>
+      <p>第一則訊息<b>只放文章就好</b>，預設是四年級、5 題、閱讀素養。想改設定，等它出完題再說「改成三年級、8 題」。</p>
+      <p>Gemini 會先給你看題目預覽，最後給一段標著 <code>json</code> 的「題組資料」。</p>
+    </li>
+    <li class="panel step">
+      <h3><span class="num">3</span>複製題組資料，貼到題組下載器</h3>
+      <p>按題組資料右上角的「複製」，打開 <a href="./">PaGamO 題組下載器</a> 貼上，確認題目後按「⬇ 下載 PaGamO 題組 Excel」。</p>
+      <p>下載完會自動開啟 PaGamO「批量上傳」頁面：題型選「<b>題組</b>」，選剛下載的檔案上傳即可。</p>
+      <a class="btn primary" href="./">📥 打開題組下載器</a>
+    </li>
+  </ol>
+
+  <h2><span class="tag">更新</span>怎麼更新成新版</h2>
+  <div class="panel">
+    <ol style="margin:0;padding-left:1.3em">
+      <li>在上方重新下載最新的 <code>SKILL.md</code>。</li>
+      <li>到 <a href="https://gemini.google.com/customize/skills" target="_blank" rel="noopener noreferrer">Gemini 技能頁</a>，在 <code>pagamo-reading-set</code> 右邊按「⋯」。</li>
+      <li>選「<b>取代技能</b>」，選新的 <code>SKILL.md</code>。如果沒有成功，就先選「刪除」把舊的刪掉，再照上面的安裝步驟重新上傳。</li>
+    </ol>
+  </div>
+
+  <h2><span class="tag">問題</span>常見問題</h2>
+  <div class="faq">
+    <details open>
+      <summary>Gemini 一直顯示「Skills: pagamo-reading-set」轉圈，沒有回應</summary>
+      <p>這是 Gemini 技能目前偶爾會發生的狀況。請按停止，<b>開一個新對話</b>重新 @ 技能、貼文章；還是不行就過一段時間再試。</p>
+    </details>
+    <details>
+      <summary>Gemini 有出題，但最後沒有給「題組資料」</summary>
+      <p>直接在同一個對話說：「請依照 pagamo-reading-set 技能，輸出 json 格式的題組資料」。</p>
+    </details>
+    <details>
+      <summary>@ 之後找不到技能</summary>
+      <ul>
+        <li>確認目前登入的是裝技能的那個帳號。</li>
+        <li>確認輸入框沒有打開 Canvas（Canvas 開著時，技能不能用）。</li>
+        <li>回到技能頁，確認 <code>pagamo-reading-set</code> 在「已安裝」區，而不是只在「全部」區。</li>
+      </ul>
+    </details>
+    <details>
+      <summary>題組下載器說「題組資料有問題」</summary>
+      <p>下載器會用紅字列出哪裡不對（例如答案寫 D 但只有三個選項）。把紅字複製給 Gemini，請它「修正後重新輸出題組資料」。</p>
+    </details>
+    <details>
+      <summary>上傳時說「已有名為 pagamo-reading-set 的技能」</summary>
+      <p>你之前已經裝過了。要換新版請看上面的「怎麼更新成新版」。</p>
+    </details>
+  </div>
+
+  <h2><span class="tag">備案</span>上傳不行？改用「手動建立」</h2>
+  <div class="panel">
+    <p style="margin-top:0">在技能頁按「建立 ▾」→「手動建立」，用下面三個按鈕依序複製，貼到對應的欄位，再按儲存。</p>
+    <div class="copyrow">
+      <button class="btn ghost" type="button" data-copy="name">📋 複製「技能名稱」</button>
+      <button class="btn ghost" type="button" data-copy="desc">📋 複製「技能說明」</button>
+      <button class="btn ghost" type="button" data-copy="body">📋 複製「技能指令」</button>
+    </div>
+    <p id="copyMsg" role="status" aria-live="polite"></p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand"><img class="logo" src="favicon.svg?v=1.5.0" alt="" width="48" height="48">
+      <div><strong>PaGamO 題組下載器</strong><span>Gemini 出題、這裡轉檔，PaGamO 一次上傳</span></div></div>
+    <ul class="footer-points">
+      <li><span class="i">🧩</span><div><strong>一個檔案就能裝</strong><small>下載 SKILL.md，Gemini 技能頁上傳即可</small></div></li>
+      <li><span class="i">🔒</span><div><strong>資料不外傳</strong><small>題目只在你的瀏覽器裡轉成 Excel</small></div></li>
+      <li><span class="i">✅</span><div><strong>已實測</strong><small>產生的檔案已在 PaGamO 批量上傳驗證通過</small></div></li>
+    </ul>
+  </div>
+  <div class="footer-bottom">
+    <p class="site-credit">Made with <span aria-label="愛心">❤️</span> by
+      <a href="https://cagoooo.github.io/Akai/" target="_blank" rel="noopener noreferrer">阿凱老師</a>・桃園市龍潭區石門國民小學</p>
+    <span class="version-tag" id="ver">v1.5.0</span>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var msg = document.getElementById('copyMsg'), parts = null;
+  function load() {
+    if (parts) return Promise.resolve(parts);
+    return fetch('skill/pagamo-reading-set/SKILL.md?v=1.5.0').then(function (r) { return r.text(); }).then(function (t) {
+      var m = t.replace(/\r\n/g, '\n').match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+      if (!m) throw new Error('技能檔格式讀不到');
+      var get = function (k) { var x = m[1].match(new RegExp('^' + k + ':\\s*(.*)$', 'm')); return x ? x[1].trim() : ''; };
+      parts = { name: get('name'), desc: get('description'), body: m[2].trim() };
+      return parts;
+    });
+  }
+  var labels = { name: '技能名稱', desc: '技能說明', body: '技能指令' };
+  document.querySelectorAll('[data-copy]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var k = b.getAttribute('data-copy');
+      load().then(function (p) { return navigator.clipboard.writeText(p[k]); })
+        .then(function () { msg.style.color = ''; msg.textContent = '✅ 已複製「' + labels[k] + '」，貼到 Gemini 對應的欄位。'; })
+        .catch(function (e) { msg.style.color = 'var(--warn)'; msg.textContent = '沒有複製成功（' + e.message + '），請改用上方「下載技能檔」。'; });
+    });
+  });
+})();
+</script>
+<script src="sw-register.js?v=1.5.0"></script>
+</body>
+</html>

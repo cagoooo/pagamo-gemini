@@ -6,6 +6,22 @@
 
 > 2026-11-19 實測：Gemini 打開 Canvas 時不能同時使用技能，所以改成「複製題組資料 → 貼到這個網頁 → 下載」。
 
+## 🧩 Gemini 技能包下載與安裝
+
+👉 圖文安裝教學：https://cagoooo.github.io/pagamo-gemini/skill.html
+
+- **下載技能檔**：[`skill/pagamo-reading-set/SKILL.md`](skill/pagamo-reading-set/SKILL.md)（只要這一個檔案，不用解壓縮）；資料夾版：[`pagamo-reading-set.zip`](skill/pagamo-reading-set.zip)。也可以到 [Releases](https://github.com/cagoooo/pagamo-gemini/releases) 下載。
+- **安裝（約 2 分鐘，只要做一次）**：
+  1. 用學校帳號開啟 [Gemini 技能頁](https://gemini.google.com/customize/skills)。
+  2. 右上角「建立 ▾」→「上傳」。
+  3. 按「檔案」，選 `SKILL.md`（不要選資料夾，資料夾裡的其他檔案會被一起塞進技能）。
+  4. 出現「上傳其他檔案（選用）」時什麼都不加，直接按「上傳」。
+  5. 「已安裝」出現 `pagamo-reading-set` 就完成。
+- **使用**：開新對話（不要開 Canvas）→ 輸入框打 `@pag` 選技能 → 貼文章送出 → 複製最後的 `json` 題組資料 → 貼到[題組下載器](https://cagoooo.github.io/pagamo-gemini/)下載 Excel → PaGamO 批量上傳選「題組」。
+- **更新**：技能右邊「⋯」→「取代技能」選新的 `SKILL.md`；不行就先刪除再重新上傳。
+
+> 2026-11-20 在教育版 Gemini 實測：上傳對話框接受 PDF、CSV、PY、TXT、MD 檔或資料夾（不接受 zip），單獨上傳 `SKILL.md` 可以正確讀到技能名稱。
+
 ## 程式庫（也可以在其他網頁使用）
 
 讓 Gemini 的 Skill「pagamo-reading-set」產生題組後，用 Canvas 做一個小網頁，老師按一下就能下載**可以直接上傳 PaGamO 的題組 Excel 檔**。
