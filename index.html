@@ -35,6 +35,9 @@
   #preview ol{padding-left:20px;margin:6px 0}
   #preview .ans{color:var(--ok);font-weight:700}
   .steps{margin:0;padding-left:20px}
+  .opt{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:var(--fs-sm);color:var(--muted);cursor:pointer}
+  .opt input{width:18px;height:18px}
+  #msg a{color:var(--brand);font-weight:700}
   .site-footer{background:linear-gradient(#e9eef7,#e2e8f3);border-top:1px solid var(--line);position:relative}
   @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .site-footer{background:linear-gradient(#111827,#0b1220)}}
   .site-footer::before{content:"";position:absolute;left:0;right:0;top:0;height:4px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
@@ -75,9 +78,10 @@
       <h2>② 確認題目，下載 Excel</h2>
       <div id="preview"><p class="empty">貼上資料後，這裡會列出題目和正確答案。</p></div>
       <div class="row"><button class="primary" id="dl" type="button" disabled>⬇ 下載 PaGamO 題組 Excel</button></div>
+      <label class="opt"><input type="checkbox" id="autoOpen" checked> 下載後自動打開 PaGamO「批量上傳」頁面（新分頁）</label>
       <h2 style="margin-top:18px">③ 上傳到 PaGamO</h2>
       <ol class="steps">
-        <li>PaGamO 教師後台 →「新增題目」→「批量上傳」。</li>
+        <li>下載後會自動打開 PaGamO「批量上傳」頁面（沒登入的話先登入）。</li>
         <li>題型選「題組」，選剛下載的檔案，按「上傳」。</li>
         <li>到「題目總覽」檢查題目。</li>
       </ol>
@@ -98,7 +102,7 @@
   <div class="footer-bottom">
     <p class="site-credit" style="margin:0">Made with <span aria-label="愛心">❤️</span> by
       <a href="https://cagoooo.github.io/Akai/" target="_blank" rel="noopener noreferrer">阿凱老師</a>・桃園市龍潭區石門國民小學</p>
-    <span class="version-tag" id="ver">v1.1.0</span>
+    <span class="version-tag" id="ver">v1.2.0</span>
   </div>
 </footer>
 
@@ -107,9 +111,40 @@
 (function () {
   var input = document.getElementById('input'), msg = document.getElementById('msg'),
       preview = document.getElementById('preview'), dl = document.getElementById('dl');
-  var data = null;
+  var data = null, ready = null;
+  var UPLOAD_URL = 'https://www.pagamo.org/api/teacher_console/questions/add_questions/batch';
+  var autoOpen = document.getElementById('autoOpen');
+  try { if (localStorage.getItem('pgm-auto-open') === '0') autoOpen.checked = false; } catch (e) {}
+  autoOpen.onchange = function () { try { localStorage.setItem('pgm-auto-open', autoOpen.checked ? '1' : '0'); } catch (e) {} };
 
   function show(text, cls) { msg.textContent = text; msg.className = cls || ''; }
+
+  function fileName(d) {
+    var n = String(d.fileName || '').trim() || ('PaGamO題組_' + String(d.sets[0].title || '').trim());
+    return n.replace(/[\\/:*?"<>|\r\n\t]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 60) + '.xlsx';
+  }
+
+  /* 先把 Excel 準備好，按下載時就能立刻存檔、立刻開分頁（拖太久瀏覽器會擋彈出視窗） */
+  function prepare(d) {
+    ready = null;
+    var p = PagamoGemini.build(d).then(function (wb) { if (data === d) ready = { data: d, wb: wb }; return wb; });
+    p.catch(function () {});
+    return p;
+  }
+
+  function done(name) {
+    var opened = null;
+    if (autoOpen.checked) {
+      opened = window.open(UPLOAD_URL, '_blank');
+      if (opened) opened.opener = null;
+    }
+    msg.className = 'ok';
+    msg.textContent = '✅ 已下載「' + name + '」。\n' + (opened ? '已在新分頁打開 PaGamO 批量上傳頁面，題型選「題組」再選這個檔案。\n' : '');
+    var a = document.createElement('a');
+    a.href = UPLOAD_URL; a.target = '_blank'; a.rel = 'noopener noreferrer';
+    a.textContent = opened ? '分頁沒出現？按這裡打開 PaGamO 批量上傳' : '👉 按這裡打開 PaGamO 批量上傳頁面';
+    msg.appendChild(a);
+  }
 
   function extract(raw) {
     var s = raw.trim().replace(/^```[a-zA-Z]*\s*/, '').replace(/```\s*$/, '');
@@ -142,13 +177,13 @@
   }
 
   function update() {
-    data = null; dl.disabled = true;
+    data = null; ready = null; dl.disabled = true;
     if (!input.value.trim()) { show(''); preview.innerHTML = '<p class="empty">貼上資料後，這裡會列出題目和正確答案。</p>'; return; }
     try {
       var d = extract(input.value);
       var errs = PagamoGemini.validate(d);
       if (errs.length) { show('❌ 題組資料有問題，請 Gemini 修正後重新輸出：\n' + errs.join('\n'), 'err'); preview.innerHTML = ''; return; }
-      data = d; render(d); dl.disabled = false;
+      data = d; render(d); dl.disabled = false; prepare(d);
       var total = d.sets.reduce(function (n, s) { return n + s.questions.length; }, 0);
       show('✅ 讀到 ' + d.sets.length + ' 篇文章、' + total + ' 題，請確認右邊的題目後按下載。', 'ok');
     } catch (e) { show('❌ ' + e.message, 'err'); preview.innerHTML = ''; }
@@ -163,8 +198,14 @@
   };
   dl.onclick = function () {
     if (!data) return;
+    var d = data, name = fileName(d);
+    if (ready && ready.data === d) {
+      XLSX.writeFile(ready.wb, name, { bookSST: true });
+      done(name);
+      return;
+    }
     dl.disabled = true; show('產生中…');
-    PagamoGemini.download(data).then(function (name) { show('✅ 已下載「' + name + '」，請到 PaGamO 批量上傳。', 'ok'); })
+    prepare(d).then(function (wb) { XLSX.writeFile(wb, name, { bookSST: true }); done(name); })
       .catch(function (e) { show('❌ ' + e.message, 'err'); })
       .then(function () { dl.disabled = false; });
   };
