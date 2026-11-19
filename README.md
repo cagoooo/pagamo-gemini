@@ -38,6 +38,13 @@ PagamoGemini.mount({
 - `answer`：A～E，複選用 `B&E`。
 - 一次可以放多篇文章（`sets` 放多個），全部加起來不超過 1,000 列。
 
+## 維護
+
+- **改完網站要升版**（不然開著舊頁面的老師不會看到「有新版本」提示）：
+  `powershell -File scripts/bump-version.ps1 -Version 1.5.0 -Notes "改了什麼"`，會同步 `version.json`、`sw.js`、`index.html` 的版本號（含 `?v=` 快取參數、分享圖網址、頁尾版本膠囊）。
+- **重畫圖示與分享圖**：改 `favicon.svg` 或 `scripts/make_icons_og.py` 後執行 `python scripts/make_icons_og.py`（需要 playwright、pillow），再升版讓 LINE／FB 重抓新圖。
+- 本機預覽（localhost）預設不啟用 Service Worker；網址加 `?sw=1` 才啟用，加 `?swdemo=1` 可直接看「有新版本」提示列的樣子。
+
 ## 已驗證
 
 - 2026-11-19：產生的檔案在真的 PaGamO 批量上傳通過（檔案檢查通過、題目總覽內容與正確答案都對）。
