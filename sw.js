@@ -1,7 +1,7 @@
 /* PaGamO 題組下載器 Service Worker
  * 新版不自動接管：先進入「等待」，由頁面上的「有新版本」提示列讓使用者決定何時重新整理。
  * 版本號由 scripts/bump-version.ps1 同步（version.json、index.html、sw.js 三處）。 */
-const BUILD_VERSION = '1.5.3';
+const BUILD_VERSION = '1.5.4';
 const PREFIX = 'pagamo-gemini-';            // github.io 同網域有很多專案，只動自己前綴的快取
 const CACHE = PREFIX + BUILD_VERSION;
 const V = '?v=' + BUILD_VERSION;
